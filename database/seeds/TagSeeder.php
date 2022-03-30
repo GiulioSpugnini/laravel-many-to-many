@@ -14,10 +14,10 @@ class TagSeeder extends Seeder
      */
     public function run(Faker $faker)
     {
-        //  la uso per collegare i tag ai post successivamente
-        for ($i = 0; $i < 10; $i++) {
+        $tag_names = ['Front-end', 'Back-end', 'Full-stack', 'Designer', 'Admin'];
+        foreach ($tag_names as $name) {
             $newTag = new Tag();
-            $newTag->label = $faker->name('label');
+            $newTag->label = $name;
             $newTag->color = $faker->hexColor();
             $newTag->save();
         }
