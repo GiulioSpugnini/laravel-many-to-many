@@ -62,7 +62,7 @@
             @foreach ($tags as $tag)
                 <div class="col-2">
                     <input type="checkbox" class="form-check-input" id="tag-{{ $tag->id }}"
-                        value="{{ $tag->id }}" name="tags[]" @if (in_array($tag->id, old('tags') ?? [])) checked @endif>
+                        value="{{ $tag->id }}" name="tags[]" @if (in_array($tag->id, old('tags', $tags_checked) ?? [])) checked @endif>
                     <label for="tag-{{ $tag->id }}" class="form-check-label">{{ $tag->label }}</label>
                 </div>
             @endforeach

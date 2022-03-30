@@ -18,10 +18,14 @@
 
                         <p class="card-text">{{ $post->content }}</p>
                         <div class="d-flex justify-content-start align-items-center">
-                            @foreach ($post->tags as $tag)
-                                <div class="rounded m-1 p-2" style="background-color:{{ $tag->color }}">
-                                    {{ $tag->label }}</div>
-                            @endforeach
+                            @if ($post->tags)
+                                @foreach ($post->tags as $tag)
+                                    <div class="rounded m-1 p-2" style="background-color:{{ $tag->color }}">
+                                        {{ $tag->label }}</div>
+                                @endforeach
+                            @else
+                                <h5>Nessun tag</h5>
+                            @endif
                         </div>
                     </div>
                 </div>
