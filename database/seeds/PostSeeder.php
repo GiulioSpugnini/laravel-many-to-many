@@ -2,6 +2,7 @@
 
 use App\Models\Category;
 use App\Models\Post;
+use App\Models\Tag;
 use Illuminate\Database\Seeder;
 use Faker\Generator as Faker;
 use Illuminate\Support\Arr;
@@ -18,6 +19,7 @@ class PostSeeder extends Seeder
     {
 
         $category_ids = Category::pluck('id')->toArray();
+        $tags = Tag::pluck('id')->toArray();
         for ($i = 0; $i < 20; $i++) {
             $post = new Post();
             $post->category_id = Arr::random($category_ids);
@@ -25,7 +27,9 @@ class PostSeeder extends Seeder
             $post->content = $faker->paragraph(2, false);
             $post->image = $faker->imageUrl(250, 250);
             $post->slug = Str::slug($post->title, '-');
+
             $post->save();
+            $post->tags()->attach(Arr::random($tags));
         }
     }
 }
