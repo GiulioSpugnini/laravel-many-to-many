@@ -80,7 +80,7 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-
+        $tags = Tag::orderBy('label', 'ASC')->get();
         return view('admin.posts.show', compact('post', $post->id));
     }
 

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('content')
     <div class="d-flex justify-content-center algin-items-center">
-        <div class="card mb-3" style="max-width: 540px;">
+        <div class="card mb-3 p-2" style="max-width: 540px;">
             <div class="row g-0">
                 <div class="col-md-4">
                     <img src="{{ $post->image }}" class="img-fluid rounded-start" alt="...">
@@ -17,9 +17,16 @@
                         </div>
 
                         <p class="card-text">{{ $post->content }}</p>
+                        <div class="d-flex justify-content-start align-items-center">
+                            @foreach ($post->tags as $tag)
+                                <div class="rounded m-1 p-2" style="background-color:{{ $tag->color }}">
+                                    {{ $tag->label }}</div>
+                            @endforeach
+                        </div>
                     </div>
                 </div>
             </div>
+            {{-- BUTTONS --}}
             <div class="d-flex justify-content-end align-items-center my-2">
                 <a class="btn btn-secondary mr-2" href="{{ route('admin.posts.index') }}" type="button"
                     class="btn btn-success">
