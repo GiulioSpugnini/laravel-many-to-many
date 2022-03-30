@@ -50022,7 +50022,7 @@ var root = new Vue({
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\Users\Giulio\Laravel\laravel-one-to-many\resources\js\front-end.js */"./resources/js/front-end.js");
+module.exports = __webpack_require__(/*! C:\Users\Giulio\Laravel\laravel-many-to-many\resources\js\front-end.js */"./resources/js/front-end.js");
 
 
 /***/ })
