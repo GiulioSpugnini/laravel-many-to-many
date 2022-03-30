@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
 use App\Models\Post;
+use App\Models\Tag;
 
 class PostController extends Controller
 {
@@ -19,8 +20,9 @@ class PostController extends Controller
     public function index()
     {
         $posts = Post::orderBy('updated_at', 'DESC')->paginate(10);
+        $tags = Tag::orderBy('label', 'ASC')->get();
         $categories = Category::all();
-        return view('admin.posts.index', compact('posts', 'categories'));
+        return view('admin.posts.index', compact('posts', 'categories', 'tags'));
     }
 
     /**
@@ -32,7 +34,8 @@ class PostController extends Controller
     {
         $post = new Post();
         $categories = Category::all();
-        return view('admin.posts.create', compact('post', 'categories'));
+        $tags = Tag::orderBy('label', 'ASC')->get();
+        return view('admin.posts.create', compact('post', 'categories', 'tags'));
     }
 
     /**
@@ -48,11 +51,13 @@ class PostController extends Controller
                 'title' => 'required|string|unique:posts',
                 'content' => ['required', 'string'],
                 'image' => ['required', 'string'],
-                'category_id' => 'nullable|exists:categories,id'
+                'category_id' => 'nullable|exists:categories,id',
+                'tags' => 'nullable|exists:tags,id'
             ],
             [
                 'title' => 'Il titolo è obbligatorio',
                 'title' => "Esiste già un post dal titolo $request->title",
+                'tags' => 'Un tag di quelli selezionati non è valido'
             ]
         );
         $data = $request->all();
@@ -61,6 +66,8 @@ class PostController extends Controller
         $post = new Post();
         $post->fill($data);
         $post->save();
+        //Se in data esiste una array allora aggancio i tags
+        if (array_key_exists('tags', $data)) $post->tags()->attach($data['tags']);
 
         return redirect()->route('admin.posts.index')->with('message', "$post->title Creato con successo")->with('type', 'success');
     }
@@ -103,11 +110,13 @@ class PostController extends Controller
                 'title' => ['required', 'string', Rule::unique('posts')->ignore($post->id)],
                 'content' => ['required', 'string'],
                 'image' => ['required', 'string'],
-                'category_id' => ['nullable', 'exists:categories,id']
+                'category_id' => ['nullable', 'exists:categories,id'],
+                'tags' => 'nullable|exists:tags,id'
             ],
             [
                 'title' => 'Il titolo è obbligatorio',
                 'title' => "Esiste già un post dal titolo $request->title",
+                'tags' => 'Un tag di quelli selezionati non è valido'
             ]
         );
         $data = $request->all();

@@ -18,7 +18,7 @@
                     <tr>
                         <th scope="col">#</th>
                         <th scope="col">Titolo:</th>
-                        <th scope="col">Slug:</th>
+                        <th scope="col">Tags:</th>
                         <th scope="col">Categorie:</th>
                         <th scope="col">Data di crezione:</th>
                         <th scope="col">Azione</th>
@@ -30,7 +30,17 @@
                         <tr>
                             <th scope="row">{{ $post->id }}</th>
                             <td>{{ $post->title }}</td>
-                            <td>{{ $post->slug }}</td>
+                            <td>
+                                @if (count($post->tags))
+                                    @foreach ($post->tags as $tag)
+                                        <span class="rounded p-1"
+                                            style="background-color:{{ $tag->color }}">{{ $tag->label }}</span>
+                                    @endforeach
+                                @else
+                                    -
+                                @endif
+
+                            </td>
                             <td>
                                 @if ($post->category)
                                     <span
@@ -41,8 +51,8 @@
                             </td>
                             <td>{{ $post->created_at }}</td>
                             <th class="d-flex justify-content-end align-items-center">
-                                <a class="btn btn-sm btn-primary mr-2" href="{{ route('admin.posts.show', $post->id) }}"><i
-                                        class="fas fa-eye"></i></a>
+                                <a class="btn btn-sm btn-primary mr-2"
+                                    href="{{ route('admin.posts.show', $post->id) }}"><i class="fas fa-eye"></i></a>
                                 <a class="btn btn-sm btn-warning mr-2"
                                     href="{{ route('admin.posts.edit', $post->id) }}"><i class="fas fa-pencil"></i></a>
                                 <form action="{{ route('admin.posts.destroy', $post->id) }}" method="POST"

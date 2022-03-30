@@ -56,6 +56,18 @@
             <textarea class="form-control" id="content" rows="5" name="content">{{ old('content', $post->content) }}</textarea>
         </div>
     </div>
+    <div class="col-12 text-center">
+        <h5 class="w-100">Tags:</h5>
+        <div class="mb-3 d-flex justify-content-center align-items-center">
+            @foreach ($tags as $tag)
+                <div class="col-2">
+                    <input type="checkbox" class="form-check-input" id="tag-{{ $tag->id }}"
+                        value="{{ $tag->id }}" name="tags[]" @if (in_array($tag->id, old('tags') ?? [])) checked @endif>
+                    <label for="tag-{{ $tag->id }}" class="form-check-label">{{ $tag->label }}</label>
+                </div>
+            @endforeach
+        </div>
+    </div>
 </div>
 
 <div class="d-flex justify-content-end align-items-center">
