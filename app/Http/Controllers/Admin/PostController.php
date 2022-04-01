@@ -9,6 +9,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
 use App\Models\Post;
 use App\Models\Tag;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
@@ -35,7 +36,8 @@ class PostController extends Controller
         $post = new Post();
         $categories = Category::all();
         $tags = Tag::orderBy('label', 'ASC')->get();
-        return view('admin.posts.create', compact('post', 'categories', 'tags'));
+        $tags_checked = $post->tags->pluck('id')->toArray();
+        return view('admin.posts.create', compact('post', 'categories', 'tags', 'tags_checked'));
     }
 
     /**
@@ -50,7 +52,7 @@ class PostController extends Controller
             [
                 'title' => 'required|string|unique:posts',
                 'content' => ['required', 'string'],
-                'image' => ['required', 'string'],
+                'image' => ['nullable', 'file'],
                 'category_id' => 'nullable|exists:categories,id',
                 'tags' => 'nullable|exists:tags,id'
             ],
@@ -61,9 +63,9 @@ class PostController extends Controller
             ]
         );
         $data = $request->all();
-
         $data['slug'] = Str::slug($request->title, '-');
         $post = new Post();
+        $data['image'] = Storage::put('images', $data['image']);
         $post->fill($data);
         $post->save();
         //Se in data esiste una array allora aggancio i tags
@@ -111,7 +113,7 @@ class PostController extends Controller
             [
                 'title' => ['required', 'string', Rule::unique('posts')->ignore($post->id)],
                 'content' => ['required', 'string'],
-                'image' => ['required', 'string'],
+                'image' => ['nullable', 'string'],
                 'category_id' => ['nullable', 'exists:categories,id'],
                 'tags' => 'nullable|exists:tags,id'
             ],

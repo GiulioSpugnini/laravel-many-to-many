@@ -9,10 +9,12 @@
 
 @endif
 @if ($post->exists)
-    <form class="my-3" action="{{ route('admin.posts.update', $post->id) }}" method="POST" novalidate>
+    <form class="my-3" action="{{ route('admin.posts.update', $post->id) }}" enctype="multipart/form-data"
+        method="POST" novalidate>
         @method('PUT')
     @else
-        <form class="my-3" action="{{ route('admin.posts.store') }}" method="POST" novalidate>
+        <form class="my-3" action="{{ route('admin.posts.store') }}" enctype="multipart/form-data"
+            method="POST" novalidate>
 @endif
 @csrf
 <div class="row gy-2">
@@ -46,8 +48,10 @@
     </div>
 
     <div class="col-6">
-        <label for="image" class="form-label">Url dell'immagine</label>
-        <input type="url" class="form-control" id="image" name="image" value="{{ old('image', $post->image) }}">
+        <div class="mb-3">
+            <label for="upload_image" class="form-label">Scegli un immagine</label>
+            <input class="form-control" type="file" id="upload_image" name="image">
+        </div>
     </div>
 
     <div class="col-12 text-center">
