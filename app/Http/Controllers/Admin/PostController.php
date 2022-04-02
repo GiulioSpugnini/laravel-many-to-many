@@ -9,7 +9,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
 use App\Models\Post;
 use App\Models\Tag;
-use App\Mail\PublishedMail;
+use App\Mail\PostCreatedMail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Mail;
@@ -76,7 +76,7 @@ class PostController extends Controller
         if (array_key_exists('tags', $data)) $post->tags()->attach($data['tags']);
 
         // Mando una mail di conferma della creazione del post
-        $mail = new PublishedMail($post);
+        $mail = new PostCreatedMail($post);
         Mail::to(Auth::user())->send($mail);
 
         return redirect()->route('admin.posts.index')->with('message', "$post->title Creato con successo")->with('type', 'success');

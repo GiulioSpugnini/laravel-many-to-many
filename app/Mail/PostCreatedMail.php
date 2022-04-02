@@ -2,13 +2,12 @@
 
 namespace App\Mail;
 
-use App\Models\Post;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class PublishedMail extends Mailable
+class PostCreatedMail extends Mailable
 {
     use Queueable, SerializesModels;
     private $post;
@@ -29,6 +28,7 @@ class PublishedMail extends Mailable
      */
     public function build()
     {
-        return $this->view('mails.posts.published', ['post' => $this->post]);
+        $url = url('/admin/posts/' . $this->post->id);
+        return $this->markdown('mails.posts.created', ['post' => $this->post, 'url' => $url]);
     }
 }
