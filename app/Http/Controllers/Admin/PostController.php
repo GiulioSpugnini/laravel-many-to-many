@@ -52,7 +52,7 @@ class PostController extends Controller
             [
                 'title' => 'required|string|unique:posts',
                 'content' => ['required', 'string'],
-                'image' => ['nullable', 'file'],
+                'image' => ['nullable', 'image'],
                 'category_id' => 'nullable|exists:categories,id',
                 'tags' => 'nullable|exists:tags,id'
             ],
@@ -65,7 +65,7 @@ class PostController extends Controller
         $data = $request->all();
         $data['slug'] = Str::slug($request->title, '-');
         $post = new Post();
-        $data['image'] = Storage::put('images', $data['image']);
+        if (array_key_exists('image', $data))  $data['image'] = Storage::put('images', $data['image']);
         $post->fill($data);
         $post->save();
         //Se in data esiste una array allora aggancio i tags
@@ -113,7 +113,7 @@ class PostController extends Controller
             [
                 'title' => ['required', 'string', Rule::unique('posts')->ignore($post->id)],
                 'content' => ['required', 'string'],
-                'image' => ['nullable', 'string'],
+                'image' => ['nullable', 'image'],
                 'category_id' => ['nullable', 'exists:categories,id'],
                 'tags' => 'nullable|exists:tags,id'
             ],
@@ -124,8 +124,13 @@ class PostController extends Controller
             ]
         );
         $data = $request->all();
-        $post->update($data);
 
+        if (array_key_exists('image', $data)) {
+            if ($post->image) Storage::delete($post->image);
+            $data['image'] = Storage::put('images', $data['image']);
+        }
+
+        $post->update($data);
         if (!array_key_exists('tags', $data)) $post->tags()->detach($data['tags']);
         else $post->tags()->sync($data['tags']);
         return redirect()->route('admin.posts.show', $post->id);
@@ -140,7 +145,7 @@ class PostController extends Controller
     public function destroy(Post $post)
     {
         if (count($post->tags)) $post->tags()->detach();
-
+        if ($post->image) Storage::delete($post->image);
         $post->delete();
         return redirect()->route('admin.posts.index')->with('message', "$post->title Eliminato con successo")->with('type', 'success');
     }
