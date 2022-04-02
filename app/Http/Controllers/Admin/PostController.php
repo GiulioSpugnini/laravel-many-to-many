@@ -70,7 +70,7 @@ class PostController extends Controller
         $post = new Post();
         if (array_key_exists('image', $data))  $data['image'] = Storage::put('images', $data['image']);
         $post->fill($data);
-        $post->author = Auth::id();
+        $post->author = Auth::user()->name;
         $post->save();
         //Se in data esiste una array allora aggancio i tags
         if (array_key_exists('tags', $data)) $post->tags()->attach($data['tags']);
