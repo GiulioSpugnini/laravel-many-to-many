@@ -9,7 +9,10 @@ use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
 use App\Models\Post;
 use App\Models\Tag;
+use App\Mail\PublishedMail;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Mail;
 
 class PostController extends Controller
 {
@@ -67,9 +70,14 @@ class PostController extends Controller
         $post = new Post();
         if (array_key_exists('image', $data))  $data['image'] = Storage::put('images', $data['image']);
         $post->fill($data);
+        $post->author = Auth::id();
         $post->save();
         //Se in data esiste una array allora aggancio i tags
         if (array_key_exists('tags', $data)) $post->tags()->attach($data['tags']);
+
+        // Mando una mail di conferma della creazione del post
+        $mail = new PublishedMail($post);
+        Mail::to(Auth::user())->send($mail);
 
         return redirect()->route('admin.posts.index')->with('message', "$post->title Creato con successo")->with('type', 'success');
     }
@@ -83,6 +91,7 @@ class PostController extends Controller
     public function show(Post $post)
     {
         $tags = Tag::orderBy('label', 'ASC')->get();
+
         return view('admin.posts.show', compact('post', $post->id));
     }
 
